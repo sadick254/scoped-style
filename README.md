@@ -36,7 +36,7 @@ import { h } from "hyperapp"
 const styled = scoped(h)
 //
 
-const Button = styled("div")`
+const Button = styled("button")`
   background: ${props => props.primary ? "orange": "gray"};
   border: none;
   border-radius: 2px;
