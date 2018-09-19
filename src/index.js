@@ -30,8 +30,9 @@ const scoped = function scoped(h) {
       sheet.insertRule(style, sheet.cssRules.length);
     });
     let attr = Object.assign({}, props);
+    attr.className = className
     if ("class" in props) {
-      attr.className = `${className} ${props.class}`;
+      attr.className += ` ${props.class}`;
     }
     if (h.name === "createElementWithValidation") {
       delete attr.class;
