@@ -7,6 +7,7 @@ Scoped style is a next gen tiny css-in-js library to help you style your compone
 - React
 - Preact
 - Hyperapp
+- Infernojs
 
 ## Installation
 
@@ -34,6 +35,11 @@ const styled = scoped(h)
 // for Hyperapp
 import { h } from "hyperapp"
 const styled = scoped(h)
+//
+
+// for Infernojs
+import { createElement } from 'inferno-create-element';
+const styled = scoped(createElement);
 //
 
 const Button = styled("button")`
