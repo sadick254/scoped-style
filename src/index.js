@@ -31,8 +31,8 @@ function scoped(h) {
           "." + classID + "{" + styles + "}",
           sheet.cssRules.length
         );
-        props.class = classID + " " + props.class || props.className;
         var attr = Object.assign({}, props);
+        attr.class = classID + " " + props.class || props.className;
         if (h.name === "createElementWithValidation") {
           attr.className = attr.class;
           delete attr.class;
