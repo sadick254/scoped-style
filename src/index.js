@@ -7,7 +7,7 @@ function scoped(h) {
       fns.shift();
       return function(props, children) {
         var classID = "i" + _id;
-        children = children || props.children;
+        children = Array.isArray(children) ? children : props.children;
         var styles = "";
         for (var index = 0; index < tags.length; index++) {
           styles += tags[index] + (fns[index] ? fns[index](props) : "");
