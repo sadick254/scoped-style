@@ -1,11 +1,11 @@
 var sheet = document.head.appendChild(document.createElement("style")).sheet;
 function scoped(h) {
   var _id = 1;
-  return function(elem) {
-    return function(tags) {
+  return function (elem) {
+    return function (tags) {
       var fns = [].slice.call(arguments);
       fns.shift();
-      return function(props, children) {
+      return function (props, children) {
         var classID = "i" + _id;
         children = Array.isArray(children) ? children : props.children;
         var styles = "";
@@ -31,8 +31,9 @@ function scoped(h) {
           "." + classID + "{" + styles + "}",
           sheet.cssRules.length
         );
+        _id++;
         var attr = Object.assign({}, props);
-        attr.class = classID + " " + props.class || props.className;
+        attr.class = classID + " " + (props.class || props.className || "");
         if (h.name === "createElementWithValidation") {
           attr.className = attr.class;
           delete attr.class;
