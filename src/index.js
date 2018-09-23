@@ -12,25 +12,28 @@ function scoped(h) {
         for (var index = 0; index < tags.length; index++) {
           styles += tags[index] + (fns[index] ? fns[index](props) : "");
         }
-        var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;\s\w"'-]+\}/gm;
-        var atRuleRegex = /@.*\W+[a-z:\s\w;-]+\}/gm;
-        var matches = styles.match(pseudoSelectorRegex) || [];
+        var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;#\(\),\s\w"'-]+\}/gm;
+        var atRuleRegex = /@.*\{\W+([a-z:;#\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#\(\),\s\w"'-]+\})+\}/gm;
+        sheet.insertRule(
+          "." + classID + "{" + styles.replace(atRuleRegex, "").replace(pseudoSelectorRegex, "") + "}",
+          sheet.cssRules.length
+        );
+        var matches = styles.replace(atRuleRegex, "").match(pseudoSelectorRegex) || [];
         for (var index = 0; index < matches.length; index++) {
-          var rule = ".i" + _id + matches[index];
+          var rule = "." + classID + matches[index];
           sheet.insertRule(rule, sheet.cssRules.length);
         }
         matches = styles.match(atRuleRegex) || [];
         for (var index = 0; index < matches.length; index++) {
-          var rule = matches[index].match(/\{\W+[\w\s;:"'-]+\}+/gm);
-          var style = matches[index].match(/@.*/) + "." + classID + rule + "}";
+          var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[a-z:;#\(\),\s\w"'-]+\}+/gm);
+          var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
+          for (var j = 0; j < pseudoSelectorMatches.length; j++) {
+              rules += "." + classID + pseudoSelectorMatches[index];
+          }
+          var style = matches[index].match(/@.*/) + rules + "}";
+          console.log(style);
           sheet.insertRule(style, sheet.cssRules.length);
         }
-        styles = styles.replace(pseudoSelectorRegex, "");
-        styles = styles.replace(atRuleRegex, "");
-        sheet.insertRule(
-          "." + classID + "{" + styles + "}",
-          sheet.cssRules.length
-        );
         _id++;
         var attr = Object.assign({}, props);
         attr.class = classID + " " + (props.class || props.className || "");
