@@ -12,8 +12,8 @@ function scoped(h) {
         for (var index = 0; index < tags.length; index++) {
           styles += tags[index] + (fns[index] ? fns[index](props) : "");
         }
-        var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;#\(\),\s\w"'-]+\}/gm;
-        var atRuleRegex = /@.*\{\W+([a-z:;#\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#\(\),\s\w"'-]+\})+\}/gm;
+        var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;#%\(\),\s\w"'-]+\}/gm;
+        var atRuleRegex = /@.*\{\W+([a-z:;#\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#%\(\),\s\w"'-]+\})+\}/gm;
         sheet.insertRule(
           "." + classID + "{" + styles.replace(atRuleRegex, "").replace(pseudoSelectorRegex, "") + "}",
           sheet.cssRules.length
@@ -25,7 +25,7 @@ function scoped(h) {
         }
         matches = styles.match(atRuleRegex) || [];
         for (var index = 0; index < matches.length; index++) {
-          var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[a-z:;#\(\),\s\w"'-]+\}+/gm);
+          var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[a-z:;#%\(\),\s\w"'-]+\}+/gm);
           var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
           for (var j = 0; j < pseudoSelectorMatches.length; j++) {
               rules += "." + classID + pseudoSelectorMatches[index];
