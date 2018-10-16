@@ -1,7 +1,7 @@
 var sheet = document.head.appendChild(document.createElement("style")).sheet;
 function scoped(h) {
   var _id = 1;
-  return function(elem) {
+  function styled(elem) {
     return function(tags) {
       var fns = [].slice.call(arguments);
       fns.shift();
@@ -45,7 +45,20 @@ function scoped(h) {
         return h(elem, attr, children);
       };
     };
+  }
+  styled.global = function(tags) {
+    var args = [].slice.call(arguments);
+    args.shift();
+    var styles = "";
+    for (var i = 0; i < tags.length; i++) {
+      styles += tags[i] + (args[i] || "");
+    }
+    var matches = styles.match(/[a-z*,\s]+\s\{\W+[a-z:;#%\(\),\s\w"'-]+\}/gm) || [];
+    for (var j = 0; j < matches.length; j++) {
+      sheet.insertRule(matches[j], sheet.cssRules.length);
+    }
   };
+  return styled;
 }
 
 export default scoped;
