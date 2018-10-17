@@ -42,6 +42,20 @@ import { createElement } from 'inferno-create-element';
 const styled = scoped(createElement);
 //
 
+// define global css
+styled.global`
+  * {
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+// and scoped css
 const Button = styled("button")`
   background: ${props => props.primary ? "orange": "gray"};
   border: none;
