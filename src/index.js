@@ -28,7 +28,7 @@ function scoped(h) {
           var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}+/gm);
           var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
           for (var j = 0; j < pseudoSelectorMatches.length; j++) {
-              rules += "." + classID + pseudoSelectorMatches[index];
+            rules += "." + classID + pseudoSelectorMatches[j];
           }
           var style = matches[index].match(/@.*/) + rules + "}";
           console.log(style);
