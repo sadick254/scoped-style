@@ -31,7 +31,6 @@ function scoped(h) {
             rules += "." + classID + pseudoSelectorMatches[j];
           }
           var style = matches[index].match(/@.*/) + rules + "}";
-          console.log(style);
           sheet.insertRule(style, sheet.cssRules.length);
         }
         _id++;
