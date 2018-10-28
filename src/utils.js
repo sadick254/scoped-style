@@ -1,5 +1,5 @@
 var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}/gm;
-var atRuleRegex = /@[\w\s\(\):-]+\{\W+([a-z:;#%\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\})+\}/gm;
+var atRuleRegex = /@.*\{\W+([a-z:;#%\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\})+\}/gm;
 var globalRuleRegex = /[a-z*,\s]+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}/gm;
 
 export function mainRule(styles, classID) {
