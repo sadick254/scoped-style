@@ -6,8 +6,8 @@ export default {
     format: "umd",
     name: "scoped-style",
     file: "scoped-style.js",
-    dir: "dist/"
+    dir: "dist/",
+    sourcemap: true
   },
   plugins: [uglify()],
-  sourcemap: true
 };
