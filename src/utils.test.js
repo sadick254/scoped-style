@@ -164,3 +164,351 @@ test('3 global rules equals array of lenth 3', t => {
   const expectedLength = 3;
   t.is(result.length, expectedLength);
 });
+
+/**
+ * css property values tests
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/Value_definition_syntax
+ */
+test('css property value : keywords > one word (here: inherit)', t => {
+  t.plan(3);
+  const scopedcss = `
+    width: inherit;
+    :hover {
+      width: inherit;
+    }
+    @media screen and (max-width: 992px) {
+      width: inherit;
+      :hover {
+        width: inherit;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      width: inherit;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      width: inherit;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        width: inherit;
+      }
+      .i1:hover {
+        width: inherit;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : keywords > words with "-" (here: ease-in)', t => {
+  t.plan(3);
+  const scopedcss = `
+    transition-timing-function: ease-in;
+    :hover {
+      transition-timing-function: ease-in;
+    }
+    @media screen and (max-width: 992px) {
+      transition-timing-function: ease-in;
+      :hover {
+        transition-timing-function: ease-in;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      transition-timing-function: ease-in;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      transition-timing-function: ease-in;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        transition-timing-function: ease-in;
+      }
+      .i1:hover {
+        transition-timing-function: ease-in;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : literals > "/"', t => {
+  t.plan(3);
+  const scopedcss = `
+    font: 12px/18px;
+    :hover {
+      font: 12px/18px;
+    }
+    @media screen and (max-width: 992px) {
+      font: 12px/18px;
+      :hover {
+        font: 12px/18px;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      font: 12px/18px;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      font: 12px/18px;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        font: 12px/18px;
+      }
+      .i1:hover {
+        font: 12px/18px;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : functions call', t => {
+  t.plan(3);
+  const scopedcss = `
+    color: rgb(20, 20, 20);
+    :hover {
+      color: rgb(20, 20, 20);
+    }
+    @media screen and (max-width: 992px) {
+      color: rgb(20, 20, 20);
+      :hover {
+        color: rgb(20, 20, 20);
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      color: rgb(20, 20, 20);
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      color: rgb(20, 20, 20);
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        color: rgb(20, 20, 20);
+      }
+      .i1:hover {
+        color: rgb(20, 20, 20);
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : data types > ","', t => {
+  t.plan(3);
+  const scopedcss = `
+    color: rgb(20, 20, 20);
+    :hover {
+      color: rgb(20, 20, 20);
+    }
+    @media screen and (max-width: 992px) {
+      color: rgb(20, 20, 20);
+      :hover {
+        color: rgb(20, 20, 20);
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      color: rgb(20, 20, 20);
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      color: rgb(20, 20, 20);
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        color: rgb(20, 20, 20);
+      }
+      .i1:hover {
+        color: rgb(20, 20, 20);
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : numbers with decimal point', t => {
+  t.plan(3);
+  const scopedcss = `
+    font-size: 1.2rem;
+    :hover {
+      font-size: 1.2rem;
+    }
+    @media screen and (max-width: 992px) {
+      font-size: 1.2rem;
+      :hover {
+        font-size: 1.2rem;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      font-size: 1.2rem;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      font-size: 1.2rem;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        font-size: 1.2rem;
+      }
+      .i1:hover {
+        font-size: 1.2rem;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : negative numbers', t => {
+  t.plan(3);
+  const scopedcss = `
+    top: -12px;
+    :hover {
+      top: -12px;
+    }
+    @media screen and (max-width: 992px) {
+      top: -12px;
+      :hover {
+        top: -12px;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      top: -12px;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      top: -12px;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        top: -12px;
+      }
+      .i1:hover {
+        top: -12px;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : explicitly positive numbers', t => {
+  t.plan(3);
+  const scopedcss = `
+    top: +12px;
+    :hover {
+      top: +12px;
+    }
+    @media screen and (max-width: 992px) {
+      top: +12px;
+      :hover {
+        top: +12px;
+      }
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      top: +12px;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1:hover {
+      top: +12px;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
+  const atRulesResult = atRules(scopedcss, className);
+  const atRulesExpected = `
+    @media screen and (max-width: 992px) {
+      .i1 {
+        top: +12px;
+      }
+      .i1:hover {
+        top: +12px;
+      }
+    }
+  `;
+  assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});

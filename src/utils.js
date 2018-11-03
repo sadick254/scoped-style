@@ -1,6 +1,6 @@
-var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}/gm;
-var atRuleRegex = /@.*\{\W+([a-z:;#%\(\),\s\w"'-]|(::?|>.*)\w+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\})+\}/gm;
-var globalRuleRegex = /[a-z*,\s]+\s\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}/gm;
+var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}/gm;
+var atRuleRegex = /@.*\{\W+([:;#%\/\.\(\)\+,\s\w"'-]|(::?|>.*)\w+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\})+\}/gm;
+var globalRuleRegex = /[a-z\*,\s]+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}/gm;
 
 export function mainRule(styles, classID) {
   return "." + classID + "{" + styles.replace(atRuleRegex, "").replace(pseudoSelectorRegex, "") + "}";
@@ -19,7 +19,7 @@ export function atRules(styles, classID) {
   var atrules = [];
   var matches = styles.match(atRuleRegex) || [];
   for (var index = 0; index < matches.length; index++) {
-    var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[a-z:;#%\.\(\),\s\w"'-]+\}+/gm);
+    var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(/\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}+/gm);
     var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
     for (var j = 0; j < pseudoSelectorMatches.length; j++) {
       rules += "." + classID + pseudoSelectorMatches[j];
