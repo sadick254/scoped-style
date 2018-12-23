@@ -34,13 +34,11 @@ export function globalRules(styles) {
 };
 
 export function generateID() {
-  var ID = '';
-  var randomChar = function () {
-    var n = Math.floor(Math.random() * 62);
-    if (n < 10) return n; //1-10
-    if (n < 36) return String.fromCharCode(n + 55); //A-Z
-    return String.fromCharCode(n + 61); //a-z
+  var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var randomString = '';
+  for (var i = 0; i < 7; i++) {
+    var randomPoz = Math.floor(Math.random() * charSet.length);
+    randomString += charSet.substring(randomPoz, randomPoz + 1);
   }
-  while (ID.length < 6) ID += randomChar();
-  return ID;
+  return randomString;
 }
