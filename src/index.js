@@ -1,14 +1,13 @@
-import { mainRule, pseudoSelectorRules, atRules, globalRules } from "./utils";
+import { mainRule, pseudoSelectorRules, atRules, globalRules, generateID } from "./utils";
 
 var sheet = document.head.appendChild(document.createElement("style")).sheet;
 function scoped(h) {
-  var _id = 1;
   function styled(elem) {
-    return function(tags) {
+    return function (tags) {
       var fns = [].slice.call(arguments);
       fns.shift();
-      return function(props, children) {
-        var classID = "i" + _id;
+      return function (props, children) {
+        var classID = generateID();
         children = Array.isArray(children) ? children : props.children;
         var styles = "";
         for (var index = 0; index < tags.length; index++) {
@@ -23,7 +22,6 @@ function scoped(h) {
         for (var index = 0; index < rulesAt.length; index++) {
           sheet.insertRule(rulesAt[index], sheet.cssRules.length);
         }
-        _id++;
         var attr = Object.assign({}, props);
         attr.class = classID + " " + (props.class || props.className || "");
         if (h.name === "createElementWithValidation") {
@@ -35,7 +33,7 @@ function scoped(h) {
       };
     };
   }
-  styled.global = function(tags) {
+  styled.global = function (tags) {
     var args = [].slice.call(arguments);
     args.shift();
     var styles = "";

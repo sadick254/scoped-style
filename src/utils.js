@@ -32,3 +32,15 @@ export function atRules(styles, classID) {
 export function globalRules(styles) {
   return styles.match(globalRuleRegex) || []
 };
+
+export function generateID() {
+  var ID = '';
+  var randomChar = function () {
+    var n = Math.floor(Math.random() * 62);
+    if (n < 10) return n; //1-10
+    if (n < 36) return String.fromCharCode(n + 55); //A-Z
+    return String.fromCharCode(n + 61); //a-z
+  }
+  while (ID.length < 6) ID += randomChar();
+  return ID;
+}
