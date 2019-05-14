@@ -1,4 +1,4 @@
-var pseudoSelectorRegex = /(::?|>.*)\w+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}/gm;
+var pseudoSelectorRegex = /(::?|>.*)\w+\s*(,\s*(::?|>.*)\w+,*\s*)*\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}/gm;
 var atRuleRegex = /@.*\{\W+([:;#%\/\.\(\)\+,\s\w"'-]|(::?|>.*)\w+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\})+\}/gm;
 var globalRuleRegex = /[a-z\*,\s]+\s\{\W+[:;#%\/\.\(\)\+,\s\w"'-]+\}/gm;
 
