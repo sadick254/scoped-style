@@ -60,16 +60,47 @@ const Button = styled("button")`
   background: ${props => props.primary ? "orange": "gray"};
   border: none;
   border-radius: 2px;
-  :hover {
+  :hover, :focus, :active {
     padding: 10px;
+  }
+  @media screen and (max-width: 640px) {
+    background: blue;
+    :hover, :focus, :active {
+      padding: 5px;
+    }
   }
 `
 
-const App = () => (
+// keyframes
+const spin = styled.keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Loader = styled('div')`
+  border: 3px solid hsla(185, 100%, 62%, 0.2);
+  border-top-color: #3cefff;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  animation: ${() => spin} 1s linear infinite;
+`;
+
+// styling children
+const BlueChildren = styled('div')`
+  > * {
+    color: blue;
+  }
+`;
+
+const App = ({ children }) => (
   <div>
     <Button primary>Login</Button>
+    <Loader/>
+    <BlueChildren>{children}</BlueChildren>
   </div>
-)
+);
 
 // Your rendering code
 

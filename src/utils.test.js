@@ -1,9 +1,19 @@
 import test from 'ava';
-import { mainRule, pseudoSelectorRules, atRules, globalRules } from './utils';
+import { mainRule, pseudoSelectorRules, atRules, globalRules, generateID } from './utils';
 
 function assertStyle(t, expected, result) {
   t.is(expected.replace(/[\r\n\s]/gm, ''), result.replace(/[\r\n\s]/gm, ''));
 }
+
+test('generateID can handle 6000 DOM nodes', t => {
+  const nbDomNodes = 6000;
+  const nbTimes = 100;
+  t.plan(nbTimes);
+  Array(nbTimes).fill(undefined).forEach(() => {
+    const ids = Array(nbDomNodes).fill(undefined).map(() => generateID());
+    t.true(ids.filter((v, i, a) => a.indexOf(v) === i).length === nbDomNodes);
+  });
+});
 
 test('extract main rules from main rules only', t => {
   const scopedcss = `
@@ -22,13 +32,32 @@ test('extract main rules from main rules only', t => {
 test('extract main rules from full rules', t => {
   const scopedcss = `
     width: 100%;
+    color: green;
     :hover {
       width: 80%;
+    }
+    > span {
+        color: blue;
+    }
+    :hover > span {
+      color: black;
+    }
+    ::placeholder, > div {
+      color: blue;
     }
     @media screen and (max-width: 992px) {
       width: 60%;
       :hover {
         width: 40%;
+      }
+      > span {
+        color: red;
+      }
+      :hover > span {
+        color: white;
+      }
+      ::placeholder, > div {
+        color: red;
       }
     }
   `;
@@ -37,6 +66,7 @@ test('extract main rules from full rules', t => {
   const expected = `
     .i1 {
       width: 100%;
+      color: green;
     }
   `;
   assertStyle(t, expected, result);
@@ -163,6 +193,45 @@ test('3 global rules equals array of lenth 3', t => {
   const result = globalRules(globalcss);
   const expectedLength = 3;
   t.is(result.length, expectedLength);
+});
+
+test('extract pseudo selector rules where pseudo selector has dash (-webkit-slider-thumb for example)', t => {
+  const scopedcss = `
+    ::-webkit-slider-thumb {
+      color: blue;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1::-webkit-slider-thumb {
+      color: blue;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+test('multiple comma separated values and whitespace for selector', t => {
+  const scopedcss = `
+    :hover,:focus,
+    :active {
+      color: red;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1:hover {
+      color: red;
+    }
+    .i1:focus {
+      color: red;
+    }
+    .i1:active {
+      color: red;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
 });
 
 /**
