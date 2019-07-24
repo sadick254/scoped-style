@@ -33,6 +33,17 @@ function scoped(h) {
       };
     };
   }
+  styled.keyframes = function (tags) {
+    var args = [].slice.call(arguments);
+    args.shift();
+    var styles = "";
+    for (var i = 0; i < tags.length; i++) {
+      styles += tags[i] + (args[i] || "");
+    }
+    var name = generateID();
+    sheet.insertRule("@keyframes " + name + " { " + styles + " }", sheet.cssRules.length);
+    return name;
+  };
   styled.global = function (tags) {
     var args = [].slice.call(arguments);
     args.shift();
