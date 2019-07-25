@@ -1,6 +1,6 @@
 {
   "name": "scoped-style",
-  "version": "1.1.2",
+  "version": "1.2.3",
   "main": "dist/scoped-style.js",
   "repository": "https://github.com/sadick254/scoped-css.git",
   "author": "Sadick <sadickjunior@gmail.com>",
@@ -17,12 +17,8 @@
     "build": "rollup -c",
     "test": "ava"
   },
-  "files": [
-    "dist/*"
-  ],
+  "files": ["dist/*"],
   "ava": {
-    "require": [
-      "@babel/register"
-    ]
+    "require": ["@babel/register"]
   }
 }
