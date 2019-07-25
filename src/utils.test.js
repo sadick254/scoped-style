@@ -211,6 +211,22 @@ test('extract pseudo selector rules where pseudo selector has dash (-webkit-slid
   assertStyle(t, expected, result.join(''));
 });
 
+test('extract pseudo selector rules where pseudo selector is a function', t => {
+  const scopedcss = `
+    :nth-child(4n) {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1:nth-child(4n) {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
 test('multiple comma separated values and whitespace for selector', t => {
   const scopedcss = `
     :hover,:focus,
@@ -232,6 +248,353 @@ test('multiple comma separated values and whitespace for selector', t => {
     }
   `;
   assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Type_selectors
+test('Type selectors in combinator', t => {
+  const scopedcss = `
+    > div {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > div {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+/**
+ * Selectors
+ */
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors
+test('Class selectors in combinator', t => {
+  const scopedcss = `
+    > .content {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > .content {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/ID_selectors
+test('ID selectors in combinator', t => {
+  const scopedcss = `
+    > #main-button {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > #main-button {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors
+test('Universal selectors in combinator', t => {
+  const scopedcss = `
+    > * {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > * {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+test('Attribute selectors in combinator', t => {
+  const scopedcss = `
+    /* <a> elements with a title attribute */
+    > a[title] {
+      color: purple;
+    }
+
+    /* <a> elements with an href matching "https://example.org" */
+    > a[href="https://example.org"] {
+      color: green;
+    }
+
+    /* <a> elements with an href containing "example" */
+    > a[href*="example"] {
+      font-size: 2em;
+    }
+
+    /* <a> elements with an href ending ".org" */
+    > a[href$=".org"] {
+      font-style: italic;
+    }
+
+    /* <a> elements whose class attribute contains the word "logo", same as a.logo */
+    > a[class~="logo"] {
+      padding: 2px;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > a[title] {
+      color: purple;
+    }
+
+    .i1 > a[href="https://example.org"] {
+      color: green;
+    }
+
+    .i1 > a[href*="example"] {
+      font-size: 2em;
+    }
+
+    .i1 > a[href$=".org"] {
+      font-style: italic;
+    }
+
+    .i1 > a[class~="logo"] {
+      padding: 2px;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+/**
+ * Combinators
+ */
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Adjacent_sibling_combinator
+test('Adjacent sibling combinator', t => {
+  const scopedcss = `
+    + div {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 + div {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/General_sibling_combinator
+test('General sibling combinator', t => {
+  const scopedcss = `
+    ~ div {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 ~ div {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Child_combinator
+test('Child combinator', t => {
+  const scopedcss = `
+    > div {
+      color: lime;
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1 > div {
+      color: lime;
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
+});
+
+test('checkbox or radio button', t => {
+  t.plan(2);
+  const scopedcss = `
+    position: relative;
+    padding-left: 2rem;
+    padding-right: 0.75rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+    user-select: none;
+
+    > input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    > input[type="checkbox"] ~ span {
+      position: absolute;
+      top: 0.2rem;
+      left: 0;
+      height: 1rem;
+      width: 1rem;
+      background-color: #eee;
+    }
+
+    > input[type="radio"] ~ span {
+      position: absolute;
+      top: 0.2rem;
+      left: 0;
+      height: 1rem;
+      width: 1rem;
+      background-color: #eee;
+      border-radius: 50%;
+    }
+
+    :hover > input ~ span {
+      background-color: #ccc;
+      transition: .2s;
+    }
+
+    > input:checked ~ span {
+      background-color: #0080b3;
+    }
+
+    :active > span {
+      transform: scale(0);
+    }
+
+    > span:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    > input:checked ~ span:after {
+      display: block;
+    }
+
+    > input[type="checkbox"] ~ span:after {
+      left: 0.25rem;
+      top: 0.05rem;
+      width: 0.25rem;
+      height: 0.6rem;
+      border: solid white;
+      border-width: 0 0.2rem 0.2rem 0;
+      transform: rotate(45deg);
+    }
+
+    > input[type="radio"] ~ span:after {
+      left: 0.3rem;
+      top: 0.3rem;
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: white;
+    }
+  `;
+  const className = 'i1';
+  const result = mainRule(scopedcss, className);
+  const expected = `
+    .i1 {
+      position: relative;
+      padding-left: 2rem;
+      padding-right: 0.75rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      font-size: 1rem;
+      user-select: none;
+    }
+  `;
+  assertStyle(t, expected, result);
+  const pseudoSelectorRulesResult = pseudoSelectorRules(scopedcss, className);
+  const pseudoSelectorRulesExpected = `
+    .i1 > input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .i1 > input[type="checkbox"] ~ span {
+      position: absolute;
+      top: 0.2rem;
+      left: 0;
+      height: 1rem;
+      width: 1rem;
+      background-color: #eee;
+    }
+
+    .i1 > input[type="radio"] ~ span {
+      position: absolute;
+      top: 0.2rem;
+      left: 0;
+      height: 1rem;
+      width: 1rem;
+      background-color: #eee;
+      border-radius: 50%;
+    }
+
+    .i1:hover > input ~ span {
+      background-color: #ccc;
+      transition: .2s;
+    }
+
+    .i1 > input:checked ~ span {
+      background-color: #0080b3;
+    }
+
+    .i1:active > span {
+      transform: scale(0);
+    }
+
+    .i1 > span:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .i1 > input:checked ~ span:after {
+      display: block;
+    }
+
+    .i1 > input[type="checkbox"] ~ span:after {
+      left: 0.25rem;
+      top: 0.05rem;
+      width: 0.25rem;
+      height: 0.6rem;
+      border: solid white;
+      border-width: 0 0.2rem 0.2rem 0;
+      transform: rotate(45deg);
+    }
+
+    .i1 > input[type="radio"] ~ span:after {
+      left: 0.3rem;
+      top: 0.3rem;
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: white;
+    }
+  `;
+  assertStyle(t, pseudoSelectorRulesExpected, pseudoSelectorRulesResult.join(''));
 });
 
 /**
@@ -580,4 +943,20 @@ test('css property value : explicitly positive numbers', t => {
     }
   `;
   assertStyle(t, atRulesExpected, atRulesResult.join(''));
+});
+
+test('css property value : special characters in content property', t => {
+  const scopedcss = `
+    ::before {
+      content: "\\25C0";
+    }
+  `;
+  const className = 'i1';
+  const result = pseudoSelectorRules(scopedcss, className);
+  const expected = `
+    .i1::before {
+      content: "\\25C0";
+    }
+  `;
+  assertStyle(t, expected, result.join(''));
 });

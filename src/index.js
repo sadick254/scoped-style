@@ -1,29 +1,43 @@
-import { mainRule, pseudoSelectorRules, atRules, globalRules, generateID } from "./utils";
+import { mainRule, pseudoSelectorRules, atRules, globalRules, generateID, insertStyleAndSetclassIDs } from "./utils";
 
-var sheet = document.head.appendChild(document.createElement("style")).sheet;
-function scoped(h) {
+var sheet = (typeof document === 'undefined')
+  ? ({ insertRule: function () { } })
+  : document.head.appendChild(document.createElement("style")).sheet;
+
+function defaultcb(css) {
+  sheet.insertRule(css, sheet.cssRules.length);
+}
+
+function scoped(h, cb) {
+  cb = cb || defaultcb;
   function styled(elem) {
     return function (tags) {
       var fns = [].slice.call(arguments);
       fns.shift();
+      var rulesForComponent = {};
       return function (props, children) {
         var classID = generateID();
+        rulesForComponent[classID] = [];
+        var classIDs = [];
         children = Array.isArray(children) ? children : props.children;
         var styles = "";
         for (var index = 0; index < tags.length; index++) {
           styles += tags[index] + (fns[index] ? fns[index](props) : "");
         }
-        sheet.insertRule(mainRule(styles, classID), sheet.cssRules.length);
+        insertStyleAndSetclassIDs(classID, mainRule(styles, classID), rulesForComponent, classIDs, cb);
         var rulesPseudoSelector = pseudoSelectorRules(styles, classID);
         for (var index = 0; index < rulesPseudoSelector.length; index++) {
-          sheet.insertRule(rulesPseudoSelector[index], sheet.cssRules.length);
+          insertStyleAndSetclassIDs(classID, rulesPseudoSelector[index], rulesForComponent, classIDs, cb);
         }
         var rulesAt = atRules(styles, classID);
         for (var index = 0; index < rulesAt.length; index++) {
-          sheet.insertRule(rulesAt[index], sheet.cssRules.length);
+          insertStyleAndSetclassIDs(classID, rulesAt[index], rulesForComponent, classIDs, cb);
+        }
+        if (rulesForComponent[classID].length === 0) {
+          delete rulesForComponent[classID];
         }
         var attr = Object.assign({}, props);
-        attr.class = classID + " " + (props.class || props.className || "");
+        attr.class = classIDs.join(" ") + " " + (props.class || props.className || "");
         if (h.name === "createElementWithValidation") {
           attr.className = attr.class;
           delete attr.class;
@@ -41,7 +55,7 @@ function scoped(h) {
       styles += tags[i] + (args[i] || "");
     }
     var name = generateID();
-    sheet.insertRule("@keyframes " + name + " { " + styles + " }", sheet.cssRules.length);
+    cb("@keyframes " + name + " { " + styles + " }");
     return name;
   };
   styled.global = function (tags) {
@@ -53,10 +67,12 @@ function scoped(h) {
     }
     var matches = globalRules(styles);
     for (var j = 0; j < matches.length; j++) {
-      sheet.insertRule(matches[j], sheet.cssRules.length);
+      cb(matches[j]);
     }
   };
   return styled;
 }
+
+scoped.defaultCallback = defaultcb;
 
 export default scoped;
