@@ -50,8 +50,8 @@ export function generateID() {
 
 function ruleAlreadyExist(classID, rule, rulesForComponent) {
   var objkeysRulesForComponent = Object.keys(rulesForComponent);
-  for (let index = 0; index < objkeysRulesForComponent.length; index++) {
-    for (let j = 0; j < rulesForComponent[objkeysRulesForComponent[index]].length; j++) {
+  for (var index = 0; index < objkeysRulesForComponent.length; index++) {
+    for (var j = 0; j < rulesForComponent[objkeysRulesForComponent[index]].length; j++) {
       if (rulesForComponent[objkeysRulesForComponent[index]][j].replace(objkeysRulesForComponent[index], classID) === rule) {
         return objkeysRulesForComponent[index];
       }
