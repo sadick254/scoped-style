@@ -1,18 +1,46 @@
 import test from 'ava';
-import { mainRule, pseudoSelectorRules, atRules, globalRules, generateID } from './utils';
+import {
+  mainRule,
+  pseudoSelectorRules,
+  atRules,
+  globalRules,
+  generateID,
+  isTestEnvironment,
+  generateIDForTests,
+} from '../utils';
 
 function assertStyle(t, expected, result) {
   t.is(expected.replace(/[\r\n\s]/gm, ''), result.replace(/[\r\n\s]/gm, ''));
 }
 
+test("isTestEnvironment returns TRUE when process.env.NODE_ENV is equal to 'test'", t => {
+  process.env.NODE_ENV = 'test';
+  t.is(isTestEnvironment(), true);
+});
+
+test("isTestEnvironment returns FALSE when process.env.NODE_ENV is not equal to 'test'", t => {
+  process.env.NODE_ENV = 'development';
+  t.is(isTestEnvironment(), false);
+});
+
+test('generateIDForTests returns incremental, predictable classNames', t => {
+  const [first, second, third] = [generateIDForTests(), generateIDForTests(), generateIDForTests()];
+
+  t.deepEqual([first, second, third], ['c0', 'c1', 'c2']);
+});
+
 test('generateID can handle 6000 DOM nodes', t => {
   const nbDomNodes = 6000;
   const nbTimes = 100;
   t.plan(nbTimes);
-  Array(nbTimes).fill(undefined).forEach(() => {
-    const ids = Array(nbDomNodes).fill(undefined).map(() => generateID());
-    t.true(ids.filter((v, i, a) => a.indexOf(v) === i).length === nbDomNodes);
-  });
+  Array(nbTimes)
+    .fill(undefined)
+    .forEach(() => {
+      const ids = Array(nbDomNodes)
+        .fill(undefined)
+        .map(() => generateID());
+      t.true(ids.filter((v, i, a) => a.indexOf(v) === i).length === nbDomNodes);
+    });
 });
 
 test('extract main rules from main rules only', t => {

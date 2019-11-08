@@ -2,41 +2,45 @@ var pseudoSelectorRegex = /((,\s*)?(\s?(::?|>\s?|~\s?|\+\s?)(\w|-|\.|#|\*|\[([^(
 var atRuleRegex = /@.*\{\W+([:;#%\/\.\(\)\+,\s\w"'-]|(::?|>.*)\w+\s\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\})+\}/gm;
 var globalRuleRegex = /[a-z\*,\s]+\s\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
 var bodyRuleRegex = /\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
+var testClassNamesIDCount = 0;
 
 export function mainRule(styles, classID) {
-  return "." + classID + "{" + styles.replace(atRuleRegex, "").replace(pseudoSelectorRegex, "") + "}";
-};
+  return (
+    '.' + classID + '{' + styles.replace(atRuleRegex, '').replace(pseudoSelectorRegex, '') + '}'
+  );
+}
 
 export function pseudoSelectorRules(styles, classID) {
   var rules = [];
-  var matches = styles.replace(atRuleRegex, "").match(pseudoSelectorRegex) || [];
+  var matches = styles.replace(atRuleRegex, '').match(pseudoSelectorRegex) || [];
   for (var index = 0; index < matches.length; index++) {
     var ruleBody = matches[index].match(bodyRuleRegex)[0];
-    var pseudoSelectors = matches[index].replace(bodyRuleRegex, "").split(",");
+    var pseudoSelectors = matches[index].replace(bodyRuleRegex, '').split(',');
     for (var j = 0; j < pseudoSelectors.length; j++) {
-      rules.push("." + classID + pseudoSelectors[j].trim() + ruleBody);
+      rules.push('.' + classID + pseudoSelectors[j].trim() + ruleBody);
     }
   }
   return rules;
-};
+}
 
 export function atRules(styles, classID) {
   var atrules = [];
   var matches = styles.match(atRuleRegex) || [];
   for (var index = 0; index < matches.length; index++) {
-    var rules = "." + classID + matches[index].replace(pseudoSelectorRegex, '').match(bodyRuleRegex);
+    var rules =
+      '.' + classID + matches[index].replace(pseudoSelectorRegex, '').match(bodyRuleRegex);
     var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
     for (var j = 0; j < pseudoSelectorMatches.length; j++) {
-      rules += "." + classID + pseudoSelectorMatches[j];
+      rules += '.' + classID + pseudoSelectorMatches[j];
     }
-    atrules.push(matches[index].match(/@.*/) + rules + "}");
+    atrules.push(matches[index].match(/@.*/) + rules + '}');
   }
   return atrules;
-};
+}
 
 export function globalRules(styles) {
-  return styles.match(globalRuleRegex) || []
-};
+  return styles.match(globalRuleRegex) || [];
+}
 
 export function generateID() {
   var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -46,19 +50,24 @@ export function generateID() {
     randomString += charSet.substring(randomPoz, randomPoz + 1);
   }
   return randomString;
-};
+}
 
 function ruleAlreadyExist(classID, rule, rulesForComponent) {
   var objkeysRulesForComponent = Object.keys(rulesForComponent);
   for (var index = 0; index < objkeysRulesForComponent.length; index++) {
     for (var j = 0; j < rulesForComponent[objkeysRulesForComponent[index]].length; j++) {
-      if (rulesForComponent[objkeysRulesForComponent[index]][j].replace(objkeysRulesForComponent[index], classID) === rule) {
+      if (
+        rulesForComponent[objkeysRulesForComponent[index]][j].replace(
+          objkeysRulesForComponent[index],
+          classID
+        ) === rule
+      ) {
         return objkeysRulesForComponent[index];
       }
     }
   }
   return undefined;
-};
+}
 
 export function insertStyleAndSetclassIDs(classID, rule, rulesForComponent, classIDs, cb) {
   var nameRuleAlreadyExist = ruleAlreadyExist(classID, rule, rulesForComponent);
@@ -76,4 +85,16 @@ export function insertStyleAndSetclassIDs(classID, rule, rulesForComponent, clas
       classIDs.push(nameRuleAlreadyExist);
     }
   }
-};
+}
+
+export function isTestEnvironment() {
+  if (typeof process !== 'undefined') {
+    return process.env.NODE_ENV === 'test';
+  } else {
+    return false;
+  }
+}
+
+export function generateIDForTests() {
+  return 'c' + testClassNamesIDCount++;
+}
