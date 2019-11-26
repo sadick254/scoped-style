@@ -16,6 +16,7 @@
     "sinon": "^7.5.0",
     "vhtml": "^2.1.0"
   },
+  "types": "@types/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "test": "ava"
