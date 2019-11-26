@@ -4,7 +4,7 @@ export default {
   input: 'src/index.js',
   output: {
     format: 'umd',
-    name: 'scopedStyle',
+    name: 'scoped-style',
     file: 'scoped-style.js',
     dir: 'dist/',
     sourcemap: true,
