@@ -22,7 +22,8 @@
     "test": "ava"
   },
   "files": [
-    "dist/*"
+    "dist/*",
+    "@types/*"
   ],
   "ava": {
     "require": [
