@@ -1,18 +1,31 @@
-var pseudoSelectorRegex = /((,\s*)?(\s?(::?|>\s?|~\s?|\+\s?)(\w|-|\.|#|\*|\[([^(\[\])])*\]|\(([^(\(\))])+\))+)+\s*)+\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
-var atRuleRegex = /@.*\{\W+([:;#%\/\.\(\)\+,\s\w"'-]|(::?|>.*)\w+\s\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\})+\}/gm;
-var globalRuleRegex = /[a-z\*,\s]+\s\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
-var bodyRuleRegex = /\{\W+[:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
+var pseudoSelectorRegex = /((,\s*)?(\s?(::?|>\s?|~\s?|\+\s?)(\w|-|_|\.|#|\*|\[([^(\[\])])*\]|\(([^(\(\))])+\))+)+\s*)+\{\W+[!:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
+var atRuleRegex = /@.*\{\W+([!:;#%\/\.\(\)\+,\s\w"'-]|((,\s*)?(\s?(::?|>\s?|~\s?|\+\s?)(\w|-|_|\.|#|\*|\[([^(\[\])])*\]|\(([^(\(\))])+\))+)+\s*)+\{\W+[!:;#%\/\\\.\(\)\+,\s\w"'-]+\})+\}/gm;
+var globalRuleRegex = /(\w|\s|:|>|~|\+|-|_|#|\.|\[([^(\[\])])*\]|\*|,|\(([^(\(\))])+\))+\{\W+[!:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
+var globalAtRuleRegex = /@.*\{\W+((\w|\s|:|>|~|\+|-|_|#|\.|\[([^(\[\])])*\]|\*|,|\(([^(\(\))])+\))+\{\W+[!:;#%\/\\\.\(\)\+,\s\w"'-]+\})+\s*\}/gm;
+var bodyRuleRegex = /\{\W+[!:;#%\/\\\.\(\)\+,\s\w"'-]+\}/gm;
+var commentRegex = /\/\*.*\*\//gm;
 var testClassNamesIDCount = 0;
 
 export function mainRule(styles, classID) {
   return (
-    '.' + classID + '{' + styles.replace(atRuleRegex, '').replace(pseudoSelectorRegex, '') + '}'
+    '.' +
+    classID +
+    '{' +
+    styles
+      .replace(commentRegex, '')
+      .replace(atRuleRegex, '')
+      .replace(pseudoSelectorRegex, '') +
+    '}'
   );
 }
 
 export function pseudoSelectorRules(styles, classID) {
   var rules = [];
-  var matches = styles.replace(atRuleRegex, '').match(pseudoSelectorRegex) || [];
+  var matches =
+    styles
+      .replace(commentRegex, '')
+      .replace(atRuleRegex, '')
+      .match(pseudoSelectorRegex) || [];
   for (var index = 0; index < matches.length; index++) {
     var ruleBody = matches[index].match(bodyRuleRegex)[0];
     var pseudoSelectors = matches[index].replace(bodyRuleRegex, '').split(',');
@@ -25,13 +38,17 @@ export function pseudoSelectorRules(styles, classID) {
 
 export function atRules(styles, classID) {
   var atrules = [];
-  var matches = styles.match(atRuleRegex) || [];
+  var matches = styles.replace(commentRegex, '').match(atRuleRegex) || [];
   for (var index = 0; index < matches.length; index++) {
-    var rules =
-      '.' + classID + matches[index].replace(pseudoSelectorRegex, '').match(bodyRuleRegex);
+    var body = (matches[index].replace(pseudoSelectorRegex, '').match(bodyRuleRegex) || [''])[0];
+    var rules = body.replace(/[\s\{\}]*/gm, '') !== '' ? '.' + classID + body : '';
     var pseudoSelectorMatches = matches[index].match(pseudoSelectorRegex) || [];
     for (var j = 0; j < pseudoSelectorMatches.length; j++) {
-      rules += '.' + classID + pseudoSelectorMatches[j];
+      var ruleBody = pseudoSelectorMatches[j].match(bodyRuleRegex)[0];
+      var pseudoSelectors = pseudoSelectorMatches[j].replace(bodyRuleRegex, '').split(',');
+      for (var k = 0; k < pseudoSelectors.length; k++) {
+        rules += '.' + classID + pseudoSelectors[k].trim() + ruleBody;
+      }
     }
     atrules.push(matches[index].match(/@.*/) + rules + '}');
   }
@@ -39,7 +56,12 @@ export function atRules(styles, classID) {
 }
 
 export function globalRules(styles) {
-  return styles.match(globalRuleRegex) || [];
+  return (styles.replace(commentRegex, '').match(globalAtRuleRegex) || []).concat(
+    styles
+      .replace(commentRegex, '')
+      .replace(globalAtRuleRegex, '')
+      .match(globalRuleRegex) || []
+  );
 }
 
 export function generateID() {
