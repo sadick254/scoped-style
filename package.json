@@ -12,7 +12,7 @@
     "@babel/register": "^7.0.0",
     "ava": "2.2.0",
     "rollup": "^0.66.0",
-    "rollup-plugin-uglify": "^6.0.0",
+    "rollup-plugin-uglify": "^6.0.4",
     "sinon": "^7.5.0",
     "vhtml": "^2.1.0"
   },
