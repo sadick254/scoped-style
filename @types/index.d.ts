@@ -1,7 +1,7 @@
 // Type definitions for scoped-style
 // Definitions by: Marcin Kołodziejczak, kolodziejczak.mn@gmail.com
 
-export as namespace scoped-style;
+export as namespace scoped;
 export = scoped;
 
 /**
