@@ -142,52 +142,6 @@ Having added that you should end up with something like this:
 
 ![Custom class names generation](./assets/custom-class-names-generation-readme.jpg)
 
-### generateID - test environment
-
-Scoped style lets you choose the way class names are generated.
-This is possible via `generateID` method which can be replaced by your own implementation.
-
-In [jest](https://jestjs.io/docs/en/configuration.html#setupfiles-array) environment it can be accomplished by adding setup file to `jest.config.js`:
-
-```
- setupFiles: ['./setupFile.js'],
-```
-
-```javascript
-// setupFile.js
-
-import scoped from 'scoped-style';
-
-scoped.generateID = () => `my-app-prefix-${Date.now()}`;
-```
-
-The outcome of your snapshot test would be something like this:
-
-```
- Snapshot name: `App should render correctly 1`
-
-    - Snapshot
-    + Received
-
-    @@ -1,11 +1,11 @@
-      <DocumentFragment>
-        <section
-    -     class="c0 "
-    +     class="my-app-prefix-1572168520661 "
-        >
-          <h1
-    -       class="c1 "
-    +       class="my-app-prefix-1572168520662 "
-          >
-            This is test description
-          </h1>
-          <header>
-            <a
-```
-
-Please note that in this case your snapshots will be failing each time you run your tests (different timestamp).
-That's why it's recommended to stick to the default class name generation strategy which was created to prevent that.
-
 ## Support and limitations
 
 ### Combinators

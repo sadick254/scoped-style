@@ -9,6 +9,8 @@ import {
   isTestEnvironment,
 } from './utils';
 
+import generateClassID from './generateClassID';
+
 var sheet =
   typeof document === 'undefined'
     ? { insertRule: function() {} }
@@ -26,14 +28,17 @@ function scoped(h, cb) {
       fns.shift();
       var rulesForComponent = {};
       return function(props, children) {
-        var classID = scoped.generateID();
-        rulesForComponent[classID] = [];
         var classIDs = [];
         children = Array.isArray(children) ? children : props.children;
         var styles = '';
         for (var index = 0; index < tags.length; index++) {
           styles += tags[index] + (fns[index] ? fns[index](props) : '');
         }
+
+        console.log(typeof elem);
+        var classID = generateClassID(styles);
+        rulesForComponent[classID] = [];
+
         insertStyleAndSetclassIDs(
           classID,
           mainRule(styles, classID),
