@@ -109,39 +109,6 @@ const App = ({ children }) => (
 // Your rendering code
 ```
 
-## Configuration
-
-### generateID - application code
-
-Scoped style lets you choose the way class names are generated.
-This is possible via `generateID` method which can be replaced by your own implementation:
-
-```javascript
-// <componentName>.styles.js
-
-import { h } from 'preact';
-import scoped from 'scoped-style';
-
-// These two lines below are responsible for achieving custom class name generation
-const defaultGenerateID = scoped.generateID;
-scoped.generateID = () => `my-app-prefix-${defaultGenerateID()}`;
-
-const styled = scoped(h);
-
-export const Container = styled('section')`
-  padding: 10px;
-  color: #000;
-`;
-
-export const AppDescription = styled('h1')`
-  color: #0f0f0f;
-`;
-```
-
-Having added that you should end up with something like this:
-
-![Custom class names generation](./assets/custom-class-names-generation-readme.jpg)
-
 ## Support and limitations
 
 ### Combinators
